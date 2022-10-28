@@ -6484,6 +6484,36 @@
       }
     },
     {
+      "name": "grid",
+      "schema": {
+        "object": {
+          "closed": true,
+          "properties": {
+            "sidebar-base-width": {
+              "string": {
+                "description": "The base width of the sidebar (left) column in an HTML page."
+              }
+            },
+            "margin-base-width": {
+              "string": {
+                "description": "The base width of the margin (right) column in an HTML page."
+              }
+            },
+            "body-base-width": {
+              "string": {
+                "description": "The base width of the body (center) column in an HTML page."
+              }
+            },
+            "gutter-width": {
+              "string": {
+                "description": "The width of the gutter that appears between columns in an HTML page."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "appendix-style",
       "schema": {
         "anyOf": [
@@ -12796,7 +12826,11 @@
       "long": "Title of the volume of the item or container holding the item.\nAlso use for titles of periodical special issues, special sections,\nand the like."
     },
     "Disambiguating year suffix in author-date styles (e.g.&nbsp;“a” in “Doe,\n1999a”).",
-    "internal-schema-hack"
+    "internal-schema-hack",
+    "The base width of the sidebar (left) column in an HTML page.",
+    "The base width of the margin (right) column in an HTML page.",
+    "The base width of the body (center) column in an HTML page.",
+    "The width of the gutter that appears between columns in an HTML\npage."
   ],
   "schema/external-schemas.yml": [
     {
@@ -13009,12 +13043,12 @@
     "mermaid": "%%"
   },
   "handlers/mermaid/schema.yml": {
-    "_internalId": 132474,
+    "_internalId": 132485,
     "type": "object",
     "description": "be an object",
     "properties": {
       "mermaid-format": {
-        "_internalId": 132473,
+        "_internalId": 132484,
         "type": "enum",
         "enum": [
           "png",
