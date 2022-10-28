@@ -13514,17 +13514,17 @@ try {
               object: {
                 closed: true,
                 properties: {
-                  "sidebar-base-width": {
+                  "sidebar-width": {
                     string: {
                       description: "The base width of the sidebar (left) column in an HTML page."
                     }
                   },
-                  "margin-base-width": {
+                  "margin-width": {
                     string: {
                       description: "The base width of the margin (right) column in an HTML page."
                     }
                   },
-                  "body-base-width": {
+                  "body-width": {
                     string: {
                       description: "The base width of the body (center) column in an HTML page."
                     }
@@ -18799,6 +18799,10 @@ try {
             short: "Target page width for output (used to compute columns widths for\n<code>layout</code> divs)",
             long: "Target page width for output (used to compute columns widths for\n<code>layout</code> divs). Defaults to 6.5 inches, which corresponds to\ndefault letter page settings in docx and odt."
           },
+          "The base width of the sidebar (left) column in an HTML page.",
+          "The base width of the margin (right) column in an HTML page.",
+          "The base width of the body (center) column in an HTML page.",
+          "The width of the gutter that appears between columns in an HTML\npage.",
           {
             short: "The layout of the appendix for this document (<code>none</code>,\n<code>plain</code>, or <code>default</code>)",
             long: "The layout of the appendix for this document (<code>none</code>,\n<code>plain</code>, or <code>default</code>).\nTo completely disable any styling of the appendix, choose the\nappendix style <code>none</code>. For minimal styling, choose\n<code>plain.</code>"
@@ -19851,11 +19855,7 @@ try {
             long: "Title of the volume of the item or container holding the item.\nAlso use for titles of periodical special issues, special sections,\nand the like."
           },
           "Disambiguating year suffix in author-date styles (e.g.&nbsp;\u201Ca\u201D in \u201CDoe,\n1999a\u201D).",
-          "internal-schema-hack",
-          "The base width of the sidebar (left) column in an HTML page.",
-          "The base width of the margin (right) column in an HTML page.",
-          "The base width of the body (center) column in an HTML page.",
-          "The width of the gutter that appears between columns in an HTML\npage."
+          "internal-schema-hack"
         ],
         "schema/external-schemas.yml": [
           {
@@ -20068,12 +20068,12 @@ try {
           mermaid: "%%"
         },
         "handlers/mermaid/schema.yml": {
-          _internalId: 132485,
+          _internalId: 133265,
           type: "object",
           description: "be an object",
           properties: {
             "mermaid-format": {
-              _internalId: 132484,
+              _internalId: 133264,
               type: "enum",
               enum: [
                 "png",
