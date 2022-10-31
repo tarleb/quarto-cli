@@ -53,6 +53,7 @@ import {
   RenderExecuteOptions,
   RenderFile,
   RenderFilesResult,
+  RenderFlags,
   RenderOptions,
 } from "./types.ts";
 import { error, info } from "log/mod.ts";
@@ -437,6 +438,7 @@ export async function renderFiles(
             format: recipe.format,
             markdown: mappedMarkdown!,
             context,
+            flags: options.flags || {} as RenderFlags,
             stage: "post-engine",
           };
 
