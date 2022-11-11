@@ -9770,6 +9770,8 @@ var require_yaml_intelligence_resources = __commonJS({
             properties: {
               "toc-title-document": "string",
               "toc-title-website": "string",
+              "related-formats-title": "string",
+              "related-notebooks-title": "string",
               "callout-tip-caption": "string",
               "callout-note-caption": "string",
               "callout-warning-caption": "string",
@@ -18507,6 +18509,8 @@ var require_yaml_intelligence_resources = __commonJS({
         "The number scheme used for references.",
         "The number scheme used for sub references.",
         "Whether cross references should be hyper-linked.",
+        "The title used for appendix.",
+        "The delimiter beween appendix number and title.",
         "Visual editor configuration",
         "Default editing mode for document",
         "Markdown writing options for visual editor",
@@ -20008,7 +20012,8 @@ var require_yaml_intelligence_resources = __commonJS({
       "handlers/languages.yml": [
         "mermaid",
         "include",
-        "dot"
+        "dot",
+        "embed"
       ],
       "handlers/lang-comment-chars.yml": {
         r: "#",
@@ -20065,12 +20070,12 @@ var require_yaml_intelligence_resources = __commonJS({
         mermaid: "%%"
       },
       "handlers/mermaid/schema.yml": {
-        _internalId: 133277,
+        _internalId: 133541,
         type: "object",
         description: "be an object",
         properties: {
           "mermaid-format": {
-            _internalId: 133276,
+            _internalId: 133540,
             type: "enum",
             enum: [
               "png",

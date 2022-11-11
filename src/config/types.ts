@@ -138,6 +138,8 @@ import {
   kPreferHtml,
   kQuartoFilters,
   kReferenceLocation,
+  kRelatedFormatsTitle,
+  kRelatedNotebooksTitle,
   kRepoActionLinksEdit,
   kRepoActionLinksIssue,
   kRepoActionLinksSource,
@@ -495,6 +497,8 @@ export interface PdfEngine {
 export interface FormatLanguage {
   [kTocTitleDocument]?: string;
   [kTocTitleWebsite]?: string;
+  [kRelatedFormatsTitle]?: string;
+  [kRelatedNotebooksTitle]?: string;
   [kCalloutTipCaption]?: string;
   [kCalloutNoteCaption]?: string;
   [kCalloutWarningCaption]?: string;
