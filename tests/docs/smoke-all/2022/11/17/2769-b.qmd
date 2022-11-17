@@ -1,0 +1,21 @@
+---
+title: results
+format: html
+_quarto:
+  tests:
+    html:
+      ensureFileRegexMatches:
+        - ["(b) tab2"]
+---
+ 
+```{r}
+#| echo: fenced
+#| label: tbl-fenced
+#| tbl-cap: "Two tables"
+#| tbl-subcap: 
+#|   - tab1
+#|   - tab2
+
+gt::gt(head(mtcars))
+gt::gt(head(mtcars))
+```
