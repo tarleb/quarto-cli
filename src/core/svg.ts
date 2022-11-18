@@ -25,10 +25,6 @@ export async function resolveSize(
   }
   const width = svgEl.getAttribute("width");
   const height = svgEl.getAttribute("height");
-  if (!width || !height) {
-    // attempt to resolve figure dimensions via viewBox
-    throw new Error("Internal error: couldn't find figure dimensions");
-  }
   const getViewBox = () => {
     const vb = svgEl.attributes.getNamedItem("viewBox").value; // do it the roundabout way so that viewBox isn't dropped by deno_dom and text/html
     if (!vb) return undefined;
@@ -41,13 +37,13 @@ export async function resolveSize(
   let svgWidthInInches, svgHeightInInches;
 
   if (
-    (width.slice(0, -2) === "pt" && height.slice(0, -2) === "pt") ||
-    (width.slice(0, -2) === "px" && height.slice(0, -2) === "px") ||
+    (width?.slice(0, -2) === "pt" && height?.slice(0, -2) === "pt") ||
+    (width?.slice(0, -2) === "px" && height?.slice(0, -2) === "px") ||
     (!isNaN(Number(width)) && !isNaN(Number(height)))
   ) {
     // we assume 96 dpi which is generally what seems to be used.
-    svgWidthInInches = Number(width.slice(0, -2)) / 96;
-    svgHeightInInches = Number(height.slice(0, -2)) / 96;
+    svgWidthInInches = Number(width!.slice(0, -2)) / 96;
+    svgHeightInInches = Number(height!.slice(0, -2)) / 96;
   }
   const viewBox = getViewBox();
   if (viewBox !== undefined) {

@@ -38,3 +38,4 @@
 - ensure `video` shortcode works with `embed-resources` and `self-contained` ([#3310](https://github.com/quarto-dev/quarto-cli/issues/3310))
 - Add optional `rel` attribute to navigation links ([#3212](https://github.com/quarto-dev/quarto-cli/issues/3212))
 - Use the right port when CRI is initialized multiple times ([#3066](https://github.com/quarto-dev/quarto-cli/3066))
+- Upgrade to mermaidjs 9.2.2 ([#3350](https://github.com/quarto-dev/quarto-cli/issues/3350))

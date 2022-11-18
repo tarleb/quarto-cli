@@ -101,10 +101,6 @@ const _quartoMermaid = {
     const options = this.resolveOptions(svgEl);
     const width = svgEl.getAttribute("width");
     const height = svgEl.getAttribute("height");
-    if (!width || !height) {
-      // attempt to resolve figure dimensions via viewBox
-      throw new Error("Internal error: couldn't find figure dimensions");
-    }
     const getViewBox = () => {
       const vb = svgEl.attributes.getNamedItem("viewBox").value; // do it the roundabout way so that viewBox isn't dropped by deno_dom and text/html
       if (!vb) return undefined;
