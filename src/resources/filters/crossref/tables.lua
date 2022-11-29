@@ -106,6 +106,30 @@ function preprocessTable(el, parentId)
        -- check for tbl label
       local label = nil
       local caption, attr = parseTableCaption(last.content)
+      local old_classes = {}
+      local class_prefix = "table"
+      for _, class in ipairs(attr.classes) do
+        if class == "responsive" then
+          class_prefix = "table-responsive"
+        else
+          table.insert(old_classes, class)
+        end
+      end
+      local class_map = {
+        small = class_prefix .. "-sm",
+        medium = class_prefix .. "-md",
+        large = class_prefix .. "-lg",
+        xlarge = class_prefix .. "-xl",
+        xxlarge = class_prefix .. "-xxl",
+        striped = "table-striped",
+        bordered = "table-bordered",
+        hover = "table-hover",
+      } -- TODO test these beyond sm and striped.
+      for _, k in ipairs(old_classes) do
+        local new_class = class_map[k] or k
+        el.classes:insert(new_class)
+      end
+      attr.classes = {}
       if startsWith(attr.identifier, "tbl-") then
         -- set the label and remove it from the caption
         label = attr.identifier
