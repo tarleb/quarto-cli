@@ -57,7 +57,7 @@ export async function signtool(
         return Promise.reject();
       }
       info(`> Verify ${file}`);
-      const result2 = await runCmd(kSignToolPath, [...verifyArgs, file]);
+      const result2 = await runCmd(signToolBin, [...verifyArgs, file]);
       if (!result2.status.success) {
         console.error(`Failed to sign ${file}`);
         return Promise.reject();
