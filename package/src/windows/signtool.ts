@@ -51,6 +51,9 @@ export async function signtool(
         return Promise.reject();
       }
       info(`> ${file} signed successfully`);
-    }
+    } 
+  } catch (error) {
+    console.error("An error occurred during signing:", error);
+    return Promise.reject();
   }
 }
