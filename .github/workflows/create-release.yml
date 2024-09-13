@@ -358,7 +358,6 @@ jobs:
           signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/deno_dom/plugin.dll
           signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/pandoc.exe
           signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/quarto.js
-
         env:
           # those environment variables are required to sign with signtool
           SM_HOST: ${{ secrets.SM_HOST }}
@@ -366,7 +365,6 @@ jobs:
           SM_CLIENT_CERT_FILE: ${{ steps.setup-cert.outputs.SM_CLIENT_CERT_FILE }}
           SM_CLIENT_CERT_PASSWORD: ${{ secrets.SM_CLIENT_CERT_PASSWORD }}
           CERT_FINGERPRINT: ${{ secrets.SM_CLIENT_CERT_FINGERPRINT }}
-          SIGNTOOL_PATH: "C:/Program Files (x86)/Windows Kits/10/App Certification Kit"
 
       - name: Make Installer
         run: |
@@ -374,6 +372,17 @@ jobs:
           pushd package\src\
           .\quarto-bld.cmd make-installer-win --set-version ${{needs.configure.outputs.version}} --log-level debug
           popd
+
+      - name: Sign MSI installer
+        run: |
+          smctl --fingerprint ${{ env.CERT_FINGERPRINT }} --input ./package/out/quarto-${{needs.configure.outputs.version}}-win.msi
+        env:
+          # those environment variables are required to sign with signtool
+          SM_HOST: ${{ secrets.SM_HOST }}
+          SM_API_KEY: ${{ secrets.SM_API_KEY }}
+          SM_CLIENT_CERT_FILE: ${{ steps.setup-cert.outputs.SM_CLIENT_CERT_FILE }}
+          SM_CLIENT_CERT_PASSWORD: ${{ secrets.SM_CLIENT_CERT_PASSWORD }}
+          CERT_FINGERPRINT: ${{ secrets.SM_CLIENT_CERT_FINGERPRINT }}
 
       - name: Clean Up
         if: always()
