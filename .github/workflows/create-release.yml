@@ -341,25 +341,21 @@ jobs:
           & certutil -decode ".\.build\certificates\codesign.txt" ".\.build\certificates\codesign.pfx"
           # Configure environment for next step
           "SM_CLIENT_CERT_FILE=.\.build\certificates\codesign.pfx" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          "C:/Program Files/DigiCert/DigiCert One Signing Manager Tools" | Out-File -FilePath $env:GITHUB_PATH -Append
-
-      - name: Setup tmate
-        uses: mxschmitt/action-tmate@v3
 
       - name: Setup SMCTL Tools for Windows
         run: |
           curl -o smtools-windows-x64.msi "https://rstudio-buildtools.s3.amazonaws.com/posit-dev/smtools-windows-x64.msi"
           msiexec /i smtools-windows-x64.msi /quiet /qn /log smtools-windows-x64.log
-          # Sync certificate
-          smctl windows certsync 
-        env:
-          SM_HOST: ${{ secrets.SM_HOST }}
-          SM_API_KEY: ${{ secrets.SM_API_KEY }}
-          SM_CLIENT_CERT_FILE: ${{ steps.setup-cert.outputs.SM_CLIENT_CERT_FILE }}
-          SM_CLIENT_CERT_PASSWORD: ${{ secrets.SM_CLIENT_CERT_PASSWORD }}
+          "C:/Program Files/DigiCert/DigiCert One Signing Manager Tools" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+      - name: Setup tmate
+        uses: mxschmitt/action-tmate@v3
 
       - name: Make Installer
         run: |
+          # Sync certificate first
+          smctl windows certsync
+          # Build installer
           pushd package\src\
           .\quarto-bld.cmd make-installer-win --set-version ${{needs.configure.outputs.version}} --log-level debug
           popd
