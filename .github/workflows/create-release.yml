@@ -366,7 +366,7 @@ jobs:
           .\quarto-bld.cmd make-installer-win --set-version ${{needs.configure.outputs.version}} --log-level debug
           popd
         env:
-          # those environment variable are required to sign with signtool
+          # those environment variables are required to sign with signtool
           SM_HOST: ${{ secrets.SM_HOST }}
           SM_API_KEY: ${{ secrets.SM_API_KEY }}
           SM_CLIENT_CERT_FILE: ${{ steps.setup-cert.outputs.SM_CLIENT_CERT_FILE }}
