@@ -347,17 +347,16 @@ jobs:
           "C:/Program Files/DigiCert/DigiCert One Signing Manager Tools" | Out-File -FilePath $env:GITHUB_PATH -Append
           "C:/Program Files (x86)/Windows Kits/10/App Certification Kit" | Out-File -FilePath $env:GITHUB_PATH -Append
 
-      - name: Sign
+      - name: Sign files before making ZIP and MSI installer
         run: |
           smctl windows certsync
-          Get-ChildItem -Recurse ./package/pkg-working
-          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/quarto.exe
-          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/deno.exe
-          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/esbuild.exe
-          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/dart-sass/src/dart.exe
-          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/deno_dom/plugin.dll
-          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/pandoc.exe
-          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/quarto.js
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/quarto.exe
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/deno.exe
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/esbuild.exe
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/dart-sass/src/dart.exe
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/deno_dom/plugin.dll
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/pandoc.exe
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/quarto.js
         env:
           # those environment variables are required to sign with signtool
           SM_HOST: ${{ secrets.SM_HOST }}
@@ -375,7 +374,7 @@ jobs:
 
       - name: Sign MSI installer
         run: |
-          smctl --fingerprint ${{ env.CERT_FINGERPRINT }} --input ./package/out/quarto-${{needs.configure.outputs.version}}-win.msi
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /d "Quarto CLI" ./package/out/quarto-${{needs.configure.outputs.version}}-win.msi
         env:
           # those environment variables are required to sign with signtool
           SM_HOST: ${{ secrets.SM_HOST }}
