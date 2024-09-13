@@ -38,19 +38,27 @@ export async function signtool(
       const fileArgs = desc ? ["/d", desc, file] : [file];
 
       info(`> Signing ${file}`);
-      const result = await runCmd(signToolBin, [...signArgs, ...fileArgs]);
-      if (!result.status.success) {
+      const signCommand = new Deno.Command(signToolBin, { args: [...signArgs, file]});
+      const result = signCommand.outputSync();
+      if (!result.success) {
         console.error(`Failed to sign ${file}`);
+        console.error(new TextDecoder().decode(result.stderr));
         return Promise.reject();
+      } else {
+        console.log(new TextDecoder().decode(result.stdout));
       }
       info(`> Verify ${file}`);
-      const result2 = await runCmd(signToolBin, [...verifyArgs, file]);
-      if (!result2.status.success) {
+      const verifyCommand= new Deno.Command(signToolBin, { args: [...verifyArgs, file]});
+      const result2 = verifyCommand.outputSync();
+      if (!result2.success) {
         console.error(`Failed to sign ${file}`);
+        console.error(new TextDecoder().decode(result2.stderr));
         return Promise.reject();
+      } else {
+        console.log(new TextDecoder().decode(result2.stdout));
       }
       info(`> ${file} signed successfully`);
-    } 
+    }
   } catch (error) {
     console.error("An error occurred during signing:", error);
     return Promise.reject();
