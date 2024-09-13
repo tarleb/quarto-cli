@@ -38,6 +38,7 @@ export async function signtool(
       const fileArgs = desc ? ["/d", desc, file] : [file];
 
       info(`> Signing ${file}`);
+      const signCommand = new Deno.Command(signToolBin, { args: [...signArgs, ...fileArgs]});
       const result = signCommand.outputSync();
       if (!result.success) {
         console.log("CODE: ", result.code);
