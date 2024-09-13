@@ -29,7 +29,7 @@ export async function signtool(
   
   try {
     // signtool.exe sign /sha1 "%SM_CLIENT_CERT_FINGERPRINT%" /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 "%INSTALLER_FILE%"
-    const signArgs = ["sign", "/sha1", fingerprint, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256"];
+    const signArgs = ["sign", "/debug", "/sha1", fingerprint, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256"];
     // signtool.exe verify /v /pa "%INSTALLER_FILE%"
     const verifyArgs= ["verify", "/v", "/pa"];
     for (const descriptor of descriptors) {
@@ -41,8 +41,12 @@ export async function signtool(
       const signCommand = new Deno.Command(signToolBin, { args: [...signArgs, file]});
       const result = signCommand.outputSync();
       if (!result.success) {
+        console.log("CODE: ", result.code);
+        console.log("STDOUT")
+        console.log(new TextDecoder().decode(result.stdout));
+        console.log("STDERR")
+        console.log(new TextDecoder().decode(result.stderr));
         console.error(`Failed to sign ${file}`);
-        console.error(new TextDecoder().decode(result.stderr));
         return Promise.reject();
       } else {
         console.log(new TextDecoder().decode(result.stdout));
