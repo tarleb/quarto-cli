@@ -341,7 +341,8 @@ jobs:
           & certutil -decode ".\.build\certificates\codesign.txt" ".\.build\certificates\codesign.pfx"
           # Configure environment for next step
           "SM_CLIENT_CERT_FILE=.\.build\certificates\codesign.pfx" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools" | Out-File -FilePath $env:GITHUB_PATH -Append
+          "C:/Program Files/DigiCert/DigiCert One Signing Manager Tools" | Out-File -FilePath $env:GITHUB_PATH -Append
+
 
       - name: Setup SMCTL Tools for Windows
         run: |
