@@ -25,10 +25,9 @@ export async function makeInstallerWindows(configuration: Configuration) {
   const candleCmd = join(wixDir, "candle");
   const lightCmd = join(wixDir, "light");
 
-  // Extract the PFX file that will be used for signing
-  const encodedPfx = getEnv("QUARTO_WIN_PFX", "");
-  const pfxPw = getEnv("QUARTO_WIN_PFX_PW", "");
-  const sign = encodedPfx.length > 0 && pfxPw.length > 0;
+  // Certificate fingerprint is what is used to sign using signtool /sha1. 
+  const certFingerprint = getEnv("CERT_FINGERPRINT", "");
+  const sign = certFingerprint.length > 0;
   if (!sign) {
     warning(
       "No Signing information available in environment, skipping signing",
@@ -91,8 +90,7 @@ export async function makeInstallerWindows(configuration: Configuration) {
     ];
     await signtool(
       filesToSign,
-      encodedPfx,
-      pfxPw,
+      certFingerprint,
       workingDir,
     );
   }
@@ -185,8 +183,7 @@ export async function makeInstallerWindows(configuration: Configuration) {
     info("Signing installer");
     await signtool(
       [{ file: lightOutput, desc: "Quarto CLI" }],
-      encodedPfx,
-      pfxPw,
+      certFingerprint,
       workingDir,
     );
   }

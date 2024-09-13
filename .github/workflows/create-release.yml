@@ -329,15 +329,31 @@ jobs:
           cargo build --release --all-features --manifest-path package/launcher/Cargo.toml
           cp package/launcher/target/release/quarto.exe package/pkg-working/bin/quarto.exe
 
-      - name: Start TMate Session
-        uses: mxschmitt/action-tmate@v3
+      - name: Config for SMTL install
+        id: setup-cert
+        shell: pwsh
+        env:
+           SM_CLIENT_CERT_FILE_B64: ${{ secrets.SM_CLIENT_CERT_FILE_B64 }}
+        run: |
+          # Get certificates
+          New-Item -ItemType Directory -Force -Path .\.build\certificates
+          Set-Content -Path ".\.build\certificates\codesign.txt" -Value $env:SM_CLIENT_CERT_FILE_B64
+          & certutil -decode ".\.build\certificates\codesign.txt" ".\.build\certificates\codesign.pfx"
+          # Configure environment for next step
+          "SM_CLIENT_CERT_FILE=.\.build\certificates\codesign.pfx" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+      - name: Setup SMCTL Tools for Windows
+        run: |
+          curl -o smtools-windows-x64.msi "https://rstudio-buildtools.s3.amazonaws.com/posit-dev/smtools-windows-x64.msi"
+          msiexec /i smtools-windows-x64.msi /quiet /qn /log smtools-windows-x64.log
+          # Sync certificate
+          smctl windows certsync 
         env:
           SM_HOST: ${{ secrets.SM_HOST }}
           SM_API_KEY: ${{ secrets.SM_API_KEY }}
-          SM_CLIENT_CERT_FILE_B64: ${{ secrets.SM_CLIENT_CERT_FILE_B64 }}
+          SM_CLIENT_CERT_FILE: ${{ steps.setup-cert.outputs.SM_CLIENT_CERT_FILE }}
           SM_CLIENT_CERT_PASSWORD: ${{ secrets.SM_CLIENT_CERT_PASSWORD }}
-          SM_CLIENT_CERT_FINGERPRINT: ${{ secrets.SM_CLIENT_CERT_FINGERPRINT }}
-          DIGICERT_KEYPAIR_ALIAS: ${{ secrets.DIGICERT_KEYPAIR_ALIAS }}
 
       - name: Make Installer
         run: |
@@ -345,8 +361,13 @@ jobs:
           .\quarto-bld.cmd make-installer-win --set-version ${{needs.configure.outputs.version}} --log-level debug
           popd
         env:
-          QUARTO_WIN_PFX: ${{ secrets.WIN_PFX }}
-          QUARTO_WIN_PFX_PW: ${{ secrets.WIN_PFX_PW }}
+          # those environment variable are required to sign with signtool
+          SM_HOST: ${{ secrets.SM_HOST }}
+          SM_API_KEY: ${{ secrets.SM_API_KEY }}
+          SM_CLIENT_CERT_FILE: ${{ steps.setup-cert.outputs.SM_CLIENT_CERT_FILE }}
+          SM_CLIENT_CERT_PASSWORD: ${{ secrets.SM_CLIENT_CERT_PASSWORD }}
+          CERT_FINGERPRINT: ${{ secrets.SM_CLIENT_CERT_FINGERPRINT }}
+          SIGNTOOL_PATH: "C:/Program Files (x86)/Windows Kits/10/App Certification Kit"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
@@ -363,7 +384,6 @@ jobs:
   test-zip-win:
     runs-on: windows-latest
     needs: [configure, make-installer-win]
-    if: false
     steps:
       - uses: actions/download-artifact@v3
         with:
