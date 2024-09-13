@@ -29,18 +29,15 @@ export async function signtool(
   
   try {
     // signtool.exe sign /sha1 "%SM_CLIENT_CERT_FINGERPRINT%" /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 "%INSTALLER_FILE%"
-    // const signArgs = ["sign", "/debug", "/sha1", fingerprint, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256"];
-    const signArgs = ["sign", "--fingerprint", fingerprint];
+    const signArgs = ["sign", "/debug", "/sha1", fingerprint, "/tr", "http://timestamp.digicert.com", "/td", "SHA256", "/fd", "SHA256"];
     // signtool.exe verify /v /pa "%INSTALLER_FILE%"
-    const verifyArgs= ["sign", "verify"];
+    const verifyArgs= ["verify", "/v", "/pa"];
     for (const descriptor of descriptors) {
       const file = descriptor.file;
       const desc = descriptor.desc;
-      //const fileArgs = desc ? ["/d", desc, file] : [file];
-      const fileArgs = ["--input", file];
+      const fileArgs = desc ? ["/d", desc, file] : [file];
 
       info(`> Signing ${file}`);
-      const signCommand = new Deno.Command("C:/Program Files/DigiCert/DigiCert One Signing Manager Tools/smctl.exe", { args: [...signArgs, ...fileArgs]});
       const result = signCommand.outputSync();
       if (!result.success) {
         console.log("CODE: ", result.code);
@@ -54,7 +51,7 @@ export async function signtool(
         console.log(new TextDecoder().decode(result.stdout));
       }
       info(`> Verify ${file}`);
-      const verifyCommand= new Deno.Command("C:/Program Files/DigiCert/DigiCert One Signing Manager Tools/smctl.exe", { args: [...verifyArgs, ...fileArgs]});
+      const verifyCommand= new Deno.Command(signToolBin, { args: [...verifyArgs, file]});
       const result2 = verifyCommand.outputSync();
       if (!result2.success) {
         console.error(`Failed to sign ${file}`);

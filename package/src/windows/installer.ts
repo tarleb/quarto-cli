@@ -62,7 +62,7 @@ export async function makeInstallerWindows(configuration: Configuration) {
   }
 
   // Copy the 'dist' files into a temporary working directory
-  const tempDir = Deno.makeTempDirSync();
+  const tempDir = Deno.makeTempDirSync({dir: workingDir });
   const workingDistPath = join(tempDir, "dist");
   const workingBinPath = join(workingDistPath, "bin");
   const workingToolsPath = join(workingBinPath, "tools", );

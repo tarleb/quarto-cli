@@ -329,7 +329,7 @@ jobs:
           cargo build --release --all-features --manifest-path package/launcher/Cargo.toml
           cp package/launcher/target/release/quarto.exe package/pkg-working/bin/quarto.exe
 
-      - name: Setup SMTL
+      - name: Setup SMCTL
         id: setup-cert
         shell: pwsh
         env:
