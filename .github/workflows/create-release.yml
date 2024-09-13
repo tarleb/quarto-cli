@@ -343,6 +343,8 @@ jobs:
           "SM_CLIENT_CERT_FILE=.\.build\certificates\codesign.pfx" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           "C:/Program Files/DigiCert/DigiCert One Signing Manager Tools" | Out-File -FilePath $env:GITHUB_PATH -Append
 
+      - name: Setup tmate
+        uses: mxschmitt/action-tmate@v3
 
       - name: Setup SMCTL Tools for Windows
         run: |
