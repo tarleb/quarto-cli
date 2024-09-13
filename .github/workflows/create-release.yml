@@ -347,11 +347,18 @@ jobs:
           "C:/Program Files/DigiCert/DigiCert One Signing Manager Tools" | Out-File -FilePath $env:GITHUB_PATH -Append
           "C:/Program Files (x86)/Windows Kits/10/App Certification Kit" | Out-File -FilePath $env:GITHUB_PATH -Append
 
-      - name: Sign on CI
+      - name: Sign
         run: |
           smctl windows certsync
-          ls ./package/pkg-working
-          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/
+          Get-ChildItem -Recurse ./package/pkg-working
+          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/quarto.exe
+          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/deno.exe
+          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/esbuild.exe
+          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/dart-sass/src/dart.exe
+          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/deno_dom/plugin.dll
+          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/pandoc.exe
+          signtool.exe sign /debug /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/quarto.js
+
         env:
           # those environment variables are required to sign with signtool
           SM_HOST: ${{ secrets.SM_HOST }}
