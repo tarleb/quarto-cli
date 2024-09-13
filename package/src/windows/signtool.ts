@@ -4,6 +4,8 @@ import { download, getEnv, unzip } from "../util/utils.ts";
 import { decodeBase64 as base64decode } from "../../../src/deno_ral/encoding.ts";
 
 import { runCmd } from "../util/cmd.ts";
+import { requireQuoting, safeWindowsExec } from "../../../src/core/windows.ts";
+import { execProcess } from "../../../src/core/process.ts";
 
 const kSignToolPath = getEnv("SIGNTOOL_PATH", "")
 
@@ -39,8 +41,18 @@ export async function signtool(
       const fileArgs = desc ? ["/d", desc, file] : [file];
 
       info(`> Signing ${file}`);
-      const result = await runCmd(signToolBin, [...signArgs, ...fileArgs]);
-      if (!result.status.success) {
+      const result = await safeWindowsExec(
+        signToolBin,
+        requireQuoting([...signArgs, ...fileArgs]).args,
+        (cmd: string[]) => {
+          return execProcess({
+            cmd,
+            stdout: "piped",
+            stderr: "piped",
+          });
+        },
+      );
+      if (!result.success) {
         console.error(`Failed to sign ${file}`);
         return Promise.reject();
       }
