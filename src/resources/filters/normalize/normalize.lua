@@ -22,8 +22,9 @@ local shortcode_ast = require 'modules/astshortcode'
 
 local function stripNotes(el) 
   local result = _quarto.ast.walk(el, {
+    traverse = 'topdown',
     Note = function(_el)
-      return pandoc.Null()
+      return {}, false
     end
   })
   return result

@@ -15,8 +15,10 @@ function quarto_ast_pipeline()
           end
         end
       })
+      return nil, false
   end
     return {
+      traverse = 'topdown',
       Para = block_handler,
       Plain = block_handler,
     }
