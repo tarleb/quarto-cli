@@ -70,7 +70,12 @@ function combineFilters(filters)
       end
     end
   end
-  return combinedFilters
+  if next(combinedFilters) then
+    combinedFilters.traverse = 'topdown'
+    return combinedFilters
+  else
+    return {}
+  end
 end
 
 function inlinesToString(inlines)
