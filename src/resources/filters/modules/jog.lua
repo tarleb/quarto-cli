@@ -231,13 +231,31 @@ local element_name_map = {
 
 --- Function to traverse the pandoc AST with context.
 local function jog(element, filter)
+  local context = filter.context and List{} or nil
+
   -- Table elements have a `pandoc ` prefix in the name
   for from, to in pairs(element_name_map) do
     filter[to] = filter[from]
   end
-  local context = filter.context and List{} or nil
+
+  -- Check if we can just call Pandoc and Meta and be done
+  if ptype(element) == 'Pandoc' then
+    local must_recurse = false
+    for name in pairs(filter) do
+      if name:match'^[A-Z]' and name ~= 'Pandoc' and name ~= 'Meta' then
+        must_recurse = true
+        break
+      end
+    end
+    if not must_recurse then
+      element.meta = run_filter_function(filter.Meta, element.meta, context)
+      element = run_filter_function(filter.Pandoc, element, context)
+      return element
+    end
+  end
+
   local jog_internal = make_jogger(filter, context)
-  return jog_internal(element, filter, List{})
+  return jog_internal(element)
 end
 
 --- Add `jog` as a method to all pandoc AST elements
