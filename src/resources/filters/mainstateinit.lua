@@ -136,3 +136,20 @@ function add_crossref_category(category)
 end
 
 setup_crossref_category_indices()
+
+--- Monkey patching ahoy!
+
+
+--- Monkey-patch pandoc.utils.type, replace with a faster version
+local debug_getmetatable = debug.getmetatable
+--- Get the element type; like pandoc.utils.type, but faster.
+local function ptype (x)
+  local mt = debug_getmetatable(x)
+  if mt then
+    local name = mt.__name
+    return name or type(x)
+  else
+    return type(x)
+  end
+end
+pandoc.utils.type = ptype
