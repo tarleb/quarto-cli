@@ -14,7 +14,7 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Setup SMCTL
+    - name: Setup for SMCTL authentication
       id: setup-cert
       shell: pwsh
       run: |
@@ -39,7 +39,7 @@ runs:
         }
         Write-Output "::endgroup::"
 
-    - name: Install SMTL
+    - name: Install SMCTL
       shell: pwsh
       run: |
         Write-Output "::group::Install smctl if needed"
@@ -59,7 +59,7 @@ runs:
         }
         Write-Output "::endgroup::"
 
-    - name: Sign files before making ZIP and MSI installer
+    - name: Sign files with signtool
       shell: pwsh
       run: |
         Write-Output "::group::Check for required environment variables"
