@@ -63,6 +63,8 @@ runs:
 
     - name: Sign files with signtool
       shell: pwsh
+      env:
+        SM_CLIENT_CERT_FILE: ${{ steps.setup-cert.outputs.SM_CLIENT_CERT_FILE }}
       run: |
         Write-Output "::group::Check for required environment variables"
         $requiredEnvVars = @('SM_HOST', 'SM_API_KEY', 'SM_CLIENT_CERT_FILE', 'SM_CLIENT_CERT_PASSWORD', 'CERT_FINGERPRINT')
