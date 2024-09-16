@@ -4,6 +4,12 @@ inputs:
   paths:
     description: "Paths to sign"
     required: true
+  signtools-cmd-arg:
+    description: "Additionnal arguments to pass to signtool"
+outputs:
+  cert_path:
+    description: "certificate path"
+    value: ${{ steps.setup-cert.outputs.SM_CLIENT_CERT_FILE }}
 
 runs:
   using: "composite"
@@ -11,31 +17,58 @@ runs:
     - name: Setup SMCTL
       id: setup-cert
       shell: pwsh
-      env:
-        SM_CLIENT_CERT_FILE_B64: ${{ secrets.SM_CLIENT_CERT_FILE_B64 }}
       run: |
-        # Get certificates
-        New-Item -ItemType Directory -Force -Path .\.build\certificates
-        Set-Content -Path ".\.build\certificates\codesign.txt" -Value $env:SM_CLIENT_CERT_FILE_B64
-        & certutil -decode ".\.build\certificates\codesign.txt" ".\.build\certificates\codesign.pfx"
-        # Configure environment for next step
-        "SM_CLIENT_CERT_FILE=.\.build\certificates\codesign.pfx" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-        # Install SMTL
-        curl -o smtools-windows-x64.msi "https://rstudio-buildtools.s3.amazonaws.com/posit-dev/smtools-windows-x64.msi"
-        msiexec /i smtools-windows-x64.msi /quiet /qn /log smtools-windows-x64.log
-        "C:/Program Files/DigiCert/DigiCert One Signing Manager Tools" | Out-File -FilePath $env:GITHUB_PATH -Append
-        "C:/Program Files (x86)/Windows Kits/10/App Certification Kit" | Out-File -FilePath $env:GITHUB_PATH -Append
+        if (-not $env:SM_CLIENT_CERT_FILE_B64) {
+          Write-Output "::error title=Environment Variable Error::SM_CLIENT_CERT_FILE_B64 is not set"
+          exit 1
+        } else {
+          Write-Output "SM_CLIENT_CERT_FILE_B64 is set correctly"
+        }
+        if (!(Test-Path ".\.build\certificates\codesign.pfx")) {
+          # Get certificates
+          New-Item -ItemType Directory -Force -Path .\.build\certificates
+          Set-Content -Path ".\.build\certificates\codesign.txt" -Value $env:SM_CLIENT_CERT_FILE_B64
+          & certutil -decode ".\.build\certificates\codesign.txt" ".\.build\certificates\codesign.pfx"
+          # Configure environment for next step
+          "SM_CLIENT_CERT_FILE=.\.build\certificates\codesign.pfx" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        } else {
+          Write-Output "Certificate already exists"
+        }
+
+    - name: Install SMTL
+      shell: pwsh
+      run: |
+        if (!(Get-Command smctl -ErrorAction SilentlyContinue)) {
+          curl -o smtools-windows-x64.msi "https://rstudio-buildtools.s3.amazonaws.com/posit-dev/smtools-windows-x64.msi"
+          msiexec /i smtools-windows-x64.msi /quiet /qn /log smtools-windows-x64.log
+          "C:/Program Files/DigiCert/DigiCert One Signing Manager Tools" | Out-File -FilePath $env:GITHUB_PATH -Append
+        } else {
+            Write-Output "SMTL already installed and on PATH"
+        }
+        if (!(Get-Command signtool -ErrorAction SilentlyContinue)) {
+          "C:/Program Files (x86)/Windows Kits/10/App Certification Kit" | Out-File -FilePath $env:GITHUB_PATH -Append
+        } else {
+          Write-Output "signtool already installed and on PATH"
+        }
 
     - name: Sign files before making ZIP and MSI installer
       shell: pwsh
       run: |
+        # Check for required environment variables
+        $requiredEnvVars = @('SM_HOST', 'SM_API_KEY', 'SM_CLIENT_CERT_FILE', 'SM_CLIENT_CERT_PASSWORD', 'CERT_FINGERPRINT')
+        foreach ($envVar in $requiredEnvVars) {
+          if (-not $env:$envVar) {
+            Write-Output "::error title=Missing environment variable::Environment variable $envVar is not set."
+            exit 1
+          }
+        }
         # Sync certificate
         smctl windows certsync
         # Sign each file that will be bundled in the installer
         $paths = "${{ inputs.paths }}".Split("`r?`n") | ForEach-Object { $_.Trim() }
         foreach ($path in $paths) {
           Write-Output "::group::Signing ${path}"
-          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $path
+          signtool.exe sign /sha1 $env:CERT_FINGERPRINT /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ${{ inputs.signtools-cmd-arg }} $path
           if ($LASTEXITCODE -ne 0) {
             Write-Output "::error title=Signing error::Error while signing ${path}"
             exit 1
@@ -47,10 +80,3 @@ runs:
           }
           Write-Output "::endgroup::"
         }
-      env:
-        # those environment variables are required to sign with signtool
-        SM_HOST: ${{ secrets.SM_HOST }}
-        SM_API_KEY: ${{ secrets.SM_API_KEY }}
-        SM_CLIENT_CERT_FILE: ${{ steps.setup-cert.outputs.SM_CLIENT_CERT_FILE }}
-        SM_CLIENT_CERT_PASSWORD: ${{ secrets.SM_CLIENT_CERT_PASSWORD }}
-        CERT_FINGERPRINT: ${{ secrets.SM_CLIENT_CERT_FINGERPRINT }}

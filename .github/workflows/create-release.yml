@@ -330,6 +330,7 @@ jobs:
           cp package/launcher/target/release/quarto.exe package/pkg-working/bin/quarto.exe
 
       - name: Sign files before making ZIP and MSI installer
+        id: sign-files
         uses: ./.github/workflows/actions/sign-files
         with:
           paths: |
@@ -340,6 +341,13 @@ jobs:
             ./package/pkg-working/bin/tools/x86_64/deno_dom/plugin.dll
             ./package/pkg-working/bin/tools/pandoc.exe
             ./package/pkg-working/bin/quarto.js
+        env:
+          # those environment variables are required to sign with signtool
+          SM_HOST: ${{ secrets.SM_HOST }}
+          SM_API_KEY: ${{ secrets.SM_API_KEY }}
+          SM_CLIENT_CERT_FILE_B64: ${{ secrets.SM_CLIENT_CERT_FILE_B64 }}
+          SM_CLIENT_CERT_PASSWORD: ${{ secrets.SM_CLIENT_CERT_PASSWORD }}
+          CERT_FINGERPRINT: ${{ secrets.SM_CLIENT_CERT_FINGERPRINT }}
 
       - name: Make Installer
         run: |
@@ -349,22 +357,17 @@ jobs:
           popd
 
       - name: Sign MSI installer
-        run: |
-          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /d "Quarto CLI" ./package/out/quarto-${{needs.configure.outputs.version}}-win.msi
-          signtool.exe verify /v /pa ./package/out/quarto-${{needs.configure.outputs.version}}-win.msi
+        uses: ./.github/workflows/actions/sign-files
+        with:
+          paths: ./package/out/quarto-${{needs.configure.outputs.version}}-win.msi
+          signtools-extra-args: /d "Quarto CLI"
         env:
           # those environment variables are required to sign with signtool
           SM_HOST: ${{ secrets.SM_HOST }}
           SM_API_KEY: ${{ secrets.SM_API_KEY }}
-          SM_CLIENT_CERT_FILE: ${{ steps.setup-cert.outputs.SM_CLIENT_CERT_FILE }}
+          SM_CLIENT_CERT_FILE_B64: ${{ secrets.SM_CLIENT_CERT_FILE_B64 }}
           SM_CLIENT_CERT_PASSWORD: ${{ secrets.SM_CLIENT_CERT_PASSWORD }}
           CERT_FINGERPRINT: ${{ secrets.SM_CLIENT_CERT_FINGERPRINT }}
-
-      - name: Clean Up
-        if: always()
-        shell: pwsh
-        run: |
-          if (Test-Path ${{ steps.setup-cert.outputs.SM_CLIENT_CERT_FILE }} ) { Remove-Item -Force -Recurse $(Split-Path ${{ steps.setup-cert.outputs.SM_CLIENT_CERT_FILE }}) }
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
