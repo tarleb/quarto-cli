@@ -348,22 +348,23 @@ jobs:
           "C:/Program Files (x86)/Windows Kits/10/App Certification Kit" | Out-File -FilePath $env:GITHUB_PATH -Append
 
       - name: Sign files before making ZIP and MSI installer
+        working-directory: package/pkg-working/bin
         run: |
           smctl windows certsync
-          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/quarto.exe
-          signtool.exe verify /v /pa ./package/pkg-working/bin/quarto.exe
-          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/deno.exe
-          signtool.exe verify /v /pa ./package/pkg-working/bin/tools/x86_64/deno.exe
-          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/esbuild.exe
-          signtool.exe verify /v /pa ./package/pkg-working/bin/tools/x86_64/esbuild.exe
-          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/dart-sass/src/dart.exe
-          signtool.exe verify /v /pa ./package/pkg-working/bin/tools/x86_64/dart-sass/src/dart.exe
-          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/x86_64/deno_dom/plugin.dll
-          signtool.exe verify /v /pa ./package/pkg-working/bin/tools/x86_64/deno_dom/plugin.dll
-          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/tools/pandoc.exe
-          signtool.exe verify /v /pa ./package/pkg-working/bin/tools/pandoc.exe
-          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./package/pkg-working/bin/quarto.js
-          signtool.exe verify /v /pa ./package/pkg-working/bin/quarto.js
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./quarto.exe
+          signtool.exe verify /v /pa ./quarto.exe
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./tools/x86_64/deno.exe
+          signtool.exe verify /v /pa ./tools/x86_64/deno.exe
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./tools/x86_64/esbuild.exe
+          signtool.exe verify /v /pa ./tools/x86_64/esbuild.exe
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./tools/x86_64/dart-sass/src/dart.exe
+          signtool.exe verify /v /pa ./tools/x86_64/dart-sass/src/dart.exe
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./tools/x86_64/deno_dom/plugin.dll
+          signtool.exe verify /v /pa ./tools/x86_64/deno_dom/plugin.dll
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./tools/pandoc.exe
+          signtool.exe verify /v /pa ./tools/pandoc.exe
+          signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ./quarto.js
+          signtool.exe verify /v /pa ./quarto.js
         env:
           # those environment variables are required to sign with signtool
           SM_HOST: ${{ secrets.SM_HOST }}
