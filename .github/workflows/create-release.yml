@@ -331,6 +331,15 @@ jobs:
 
       - name: Sign files before making ZIP and MSI installer
         uses: ./.github/workflows/actions/sign-files
+        with:
+          paths: |
+            ./package/pkg-working/bin/quarto.exe
+            ./package/pkg-working/bin/tools/x86_64/deno.exe
+            ./package/pkg-working/bin/tools/x86_64/esbuild.exe
+            ./package/pkg-working/bin/tools/x86_64/dart-sass/src/dart.exe
+            ./package/pkg-working/bin/tools/x86_64/deno_dom/plugin.dll
+            ./package/pkg-working/bin/tools/pandoc.exe
+            ./package/pkg-working/bin/quarto.js
 
       - name: Make Installer
         run: |
