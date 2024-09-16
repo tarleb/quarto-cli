@@ -365,12 +365,12 @@ jobs:
             Write-Output "::group::Signing ${path}"
             signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $path
             if ($LASTEXITCODE -ne 0) {
-              Write-Output "::error file=${path},title=Signing error::signtool sign error"
+              Write-Output "::error title=Signing error::Error while signing ${path}"
               exit 1
             }
             signtool.exe verify /v /pa $path
             if ($LASTEXITCODE -ne 0) {
-              Write-Output "::error file=${path},title=Verify error::signtool verify error"
+              Write-Output "::error title=Verify signature error::Error while verifying ${path}"
               exit 1
             }
             Write-Output "::endgroup::"
