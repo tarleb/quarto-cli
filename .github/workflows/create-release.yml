@@ -348,19 +348,18 @@ jobs:
           "C:/Program Files (x86)/Windows Kits/10/App Certification Kit" | Out-File -FilePath $env:GITHUB_PATH -Append
 
       - name: Sign files before making ZIP and MSI installer
-        working-directory: package/pkg-working/bin
         run: |
           # Sync certificate
           smctl windows certsync
           # Sign each file that will be bundled in the installer
           $paths = @(
-            "./quarto.exe",
-            "./tools/x86_64/deno.exe",
-            "./tools/x86_64/esbuild.exe",
-            "./tools/x86_64/dart-sass/src/dart.exe",
-            "./tools/x86_64/deno_dom/plugin.dll",
-            "./tools/pandoc.exe",
-            "./quarto.js"
+            "./package/pkg-working/bin/quarto.exe",
+            "./package/pkg-working/bin/tools/x86_64/deno.exe",
+            "./package/pkg-working/bin/tools/x86_64/esbuild.exe",
+            "./package/pkg-working/bin/tools/x86_64/dart-sass/src/dart.exe",
+            "./package/pkg-working/bin/tools/x86_64/deno_dom/plugin.dll",
+            "./package/pkg-working/bin/tools/pandoc.exe",
+            "./package/pkg-working/bin/quarto.js"
           )
           foreach ($path in $paths) {
             Write-Output "::group::Signing ${path}"
