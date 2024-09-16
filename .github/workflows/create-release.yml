@@ -363,8 +363,18 @@ jobs:
             "./quarto.js"
           )
           foreach ($path in $paths) {
+            Write-Output "::group::Signing ${path}"
             signtool.exe sign /sha1 ${{ env.CERT_FINGERPRINT }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $path
+            if ($LASTEXITCODE -ne 0) {
+              Write-Output "::error file=${path},title=Signing error::signtool sign error"
+              exit 1
+            }
             signtool.exe verify /v /pa $path
+            if ($LASTEXITCODE -ne 0) {
+              Write-Output "::error file=${path},title=Verify error::signtool verify error"
+              exit 1
+            }
+            Write-Output "::endgroup::"
           }
         env:
           # those environment variables are required to sign with signtool
