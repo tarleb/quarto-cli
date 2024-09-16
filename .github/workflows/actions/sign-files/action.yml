@@ -79,7 +79,7 @@ runs:
         smctl windows certsync
         Write-Output "::endgroup::"
         # Sign each file that will be bundled in the installer
-        $paths = "${{ inputs.paths }}" -split "`n" | ForEach-Object { $_.Trim() }
+        $paths = "${{ inputs.paths }}" -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" }
         foreach ($path in $paths) {
           Write-Output "::group::Signing ${path}"
           signtool.exe sign /sha1 $env:CERT_FINGERPRINT /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ${{ inputs.signtools-extra-args }} $path
