@@ -4,7 +4,7 @@ inputs:
   paths:
     description: "Paths to sign"
     required: true
-  signtools-cmd-arg:
+  signtools-extra-args:
     description: "Additionnal arguments to pass to signtool"
 outputs:
   cert_path:
@@ -78,7 +78,7 @@ runs:
         $paths = "${{ inputs.paths }}".Split("`r?`n") | ForEach-Object { $_.Trim() }
         foreach ($path in $paths) {
           Write-Output "::group::Signing ${path}"
-          signtool.exe sign /sha1 $env:CERT_FINGERPRINT /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ${{ inputs.signtools-cmd-arg }} $path
+          signtool.exe sign /sha1 $env:CERT_FINGERPRINT /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 ${{ inputs.signtools-extra-args }} $path
           if ($LASTEXITCODE -ne 0) {
             Write-Output "::error title=Signing error::Error while signing ${path}"
             exit 1
