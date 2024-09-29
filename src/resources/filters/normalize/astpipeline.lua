@@ -46,6 +46,7 @@ function quarto_ast_pipeline()
         parse_floatreftargets(),
         parse_blockreftargets()
       }),
+      force_pandoc_walk = true,
     },
     {
       name = "normalize-3",
