@@ -48,13 +48,6 @@ function tcontains(t,value)
   return false
 end
 
--- clear a table
-function tclear(t)
-  for k,v in pairs(t) do
-    t[k] = nil
-  end
-end
-
 -- get keys from table
 -- FIXME: with pandoc 3.4.1 this becomes
 -- return pandoc.List(pairs(t))
