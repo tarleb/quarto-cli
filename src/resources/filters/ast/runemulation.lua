@@ -82,19 +82,16 @@ local function run_emulated_filter_chain(doc, filters, afterFilterPass, profilin
         _quarto.ast._current_doc = doc
 
         if compare_jog_and_walk then
-          _QUARTO_USE_WALK = true
-          local expected = run_emulated_filter(doc:clone(), v.filter)
-          _QUARTO_USE_WALK = false
-
-          doc = run_emulated_filter(doc, v.filter)
-
+          local expected = run_emulated_filter(doc:clone(), v.filter, true)
+          doc = run_emulated_filter(doc:clone(), v.filter, v.force_pandoc_walk)
           if doc == expected then
             io.stderr:write("[ OK ] " .. v.name .. '\n')
           else
             io.stderr:write("[FAIL] " .. v.name .. '\n')
+            doc = expected
           end
         else
-          doc = run_emulated_filter(doc, v.filter)
+          doc = run_emulated_filter(doc:clone(), v.filter, v.force_pandoc_walk)
         end
 
         ensure_vault(doc)
