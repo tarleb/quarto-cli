@@ -3,9 +3,8 @@
 
 -- append values to table
 function tappend(t, values)
-  for i,value in pairs(values) do
-    table.insert(t, value)
-  end
+  pandoc.List.extend(t, values)
+  return t
 end
 
 -- prepend values to table
@@ -39,23 +38,12 @@ function tisarray(t)
 end
 
 -- map elements of a table
-function tmap(tbl, f)
-  local t = {}
-  for k,v in pairs(tbl) do
-      t[k] = f(v)
-  end
-  return t
-end
+tmap = pandoc.List.map
 
 -- does the table contain a value
 function tcontains(t,value)
   if t and type(t)=="table" and value then
-    for _, v in ipairs (t) do
-      if v == value then
-        return true
-      end
-    end
-    return false
+    return pandoc.List.includes(t, value)
   end
   return false
 end
@@ -68,6 +56,8 @@ function tclear(t)
 end
 
 -- get keys from table
+-- FIXME: with pandoc 3.4.1 this becomes
+-- return pandoc.List(pairs(t))
 function tkeys(t)
   local keyset=pandoc.List({})
   local n=0
