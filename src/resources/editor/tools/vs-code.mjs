@@ -18567,14 +18567,10 @@ var require_yaml_intelligence_resources = __commonJS({
                       description: "Show the scrollbar while scrolling, hide while idle (default `auto`). Set to 'true' to always show, `false` to always hide."
                     },
                     snap: {
-                      anyOf: [
-                        "boolean",
-                        {
-                          enum: [
-                            "mandatory",
-                            "proximity"
-                          ]
-                        }
+                      enum: [
+                        "mandatory",
+                        "proximity",
+                        false
                       ],
                       default: "mandatory",
                       description: "When scrolling, it will automatically snap to the closest slide. Only snap when close to the top of a slide using `proximity`. Disable snapping altogether by setting to `false`.\n"
@@ -23037,6 +23033,7 @@ var require_yaml_intelligence_resources = __commonJS({
         "Unique presentation id provided by multiplex token server",
         "Secret provided by multiplex token server",
         "Control the scroll view feature of Revealjs",
+        "Activate scroll view by default for the presentation. Otherwise, it\nis manually avalaible by adding <code>?view=scroll</code> to url.",
         "Show the scrollbar while scrolling, hide while idle (default\n<code>auto</code>). Set to \u2018true\u2019 to always show, <code>false</code> to\nalways hide.",
         "When scrolling, it will automatically snap to the closest slide. Only\nsnap when close to the top of a slide using <code>proximity</code>.\nDisable snapping altogether by setting to <code>false</code>.",
         "By default each slide will be sized to be as tall as the viewport. If\nyou prefer a more dense layout with multiple slides visible in parallel,\nset to <code>compact</code>.",
@@ -24080,12 +24077,12 @@ var require_yaml_intelligence_resources = __commonJS({
         mermaid: "%%"
       },
       "handlers/mermaid/schema.yml": {
-        _internalId: 192471,
+        _internalId: 192610,
         type: "object",
         description: "be an object",
         properties: {
           "mermaid-format": {
-            _internalId: 192463,
+            _internalId: 192602,
             type: "enum",
             enum: [
               "png",
@@ -24101,7 +24098,7 @@ var require_yaml_intelligence_resources = __commonJS({
             exhaustiveCompletions: true
           },
           theme: {
-            _internalId: 192470,
+            _internalId: 192609,
             type: "anyOf",
             anyOf: [
               {
