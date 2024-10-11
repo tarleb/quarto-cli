@@ -24077,12 +24077,12 @@ var require_yaml_intelligence_resources = __commonJS({
         mermaid: "%%"
       },
       "handlers/mermaid/schema.yml": {
-        _internalId: 192610,
+        _internalId: 192250,
         type: "object",
         description: "be an object",
         properties: {
           "mermaid-format": {
-            _internalId: 192602,
+            _internalId: 192242,
             type: "enum",
             enum: [
               "png",
@@ -24098,7 +24098,7 @@ var require_yaml_intelligence_resources = __commonJS({
             exhaustiveCompletions: true
           },
           theme: {
-            _internalId: 192609,
+            _internalId: 192249,
             type: "anyOf",
             anyOf: [
               {
