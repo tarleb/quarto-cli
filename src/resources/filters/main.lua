@@ -196,6 +196,8 @@ import("./quarto-init/metainit.lua")
 
 -- [/import]
 
+_quarto.modules.attribcheck.enable_attribute_checks()
+
 initCrossrefIndex()
 
 initShortcodeHandlers()
